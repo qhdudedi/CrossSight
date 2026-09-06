@@ -1,0 +1,19 @@
+[project]
+name = "crosswalk-review"
+version = "0.1.0"
+description = "비신호 횡단보도 보행자 횡단 의도 추정 - YOLO11 + YOLO11-pose + PCPA(IDD-PeD)"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "ultralytics>=8.3",        # 부분 모델 1,2: YOLO11 검출(+ByteTrack), YOLO11-pose
+    "opencv-python>=4.10",
+    "numpy>=1.26,<3",
+    "lap>=0.5",                # ByteTrack 매칭
+    "tensorflow>=2.16",        # 부분 모델 3: PCPA 체크포인트 실행
+    "tf-keras>=2.16",          # Keras 2 호환 로더 (TF 2.2 저장본 구조 재구성용)
+    "h5py>=3.10",
+]
+
+# 패키지 빌드 없이 스크립트만 실행하는 프로젝트 (uv run run.py)
+[tool.uv]
+package = false

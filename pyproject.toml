@@ -9,7 +9,9 @@ dependencies = [
     "opencv-python>=4.10",
     "numpy>=1.26,<3",
     "lap>=0.5",                # ByteTrack 매칭
-    "tensorflow>=2.16",        # 부분 모델 3: PCPA 체크포인트 실행
+    # 부분 모델 3: PCPA 체크포인트 실행. Linux(WSL2 포함)에서는 CUDA 라이브러리까지 함께 설치해 GPU 사용
+    "tensorflow[and-cuda]>=2.16; sys_platform == 'linux'",
+    "tensorflow>=2.16; sys_platform != 'linux'",
     "tf-keras>=2.16",          # Keras 2 호환 로더 (TF 2.2 저장본 구조 재구성용)
     "h5py>=3.10",
 ]

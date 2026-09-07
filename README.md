@@ -5,10 +5,10 @@
 
 | 단계 | 파일 | 가중치 | 입력 → 출력 |
 |---|---|---|---|
-| 1 객체 검출 | `crosswalk/detector.py` | `yolo11s.pt`(GPU/MPS) / `yolo11n.pt`(CPU), COCO | 프레임 → 사람/차량 bbox, class, confidence, track_id |
+| 1 객체 검출 | `crosswalk/detector.py` | `yolo11s.pt`(GPU/MPS) / `yolo11n.pt`(CPU), COCO | 프레임 → 사람/차량 bbox, class, confidence, track_id (BoT-SORT+ReID, 같은 사람은 한 id) |
 | 2 자세/제스처 | `crosswalk/pose.py` | `yolo11s-pose.pt` / `yolo11n-pose.pt`, COCO Keypoints | 보행자 영역 → 17 관절 좌표 + confidence → body_frontal, facing_x, head_turn, hand_gesture |
-| 3 횡단 의도 | `crosswalk/intent.py` | `pcpa_iddped.h5` (IDD-PeD 공식 PCPA 체크포인트) | 16-frame local context(112×112) + pose(34) + bbox(4) + speed(1) → 확률 0~1 |
-| 연결 | `crosswalk/pipeline.py`, `run.py` | – | 영상 → 트랙별 프레임 단위 확률 (json/csv) + overlay.mp4 |
+| 3 횡단 의도 | `crosswalk/intent.py` | `pcpa_iddped.h5` (IDD-PeD 공식 PCPA 체크포인트) | 16-frame local context(112×112) + pose(34) + bbox(4) + speed(1, 항상 0) → 확률 0~1 |
+| 연결 | `crosswalk/pipeline.py`, `run.py` | – | 영상 → 트랙별 프레임 단위 확률 + overlay.mp4 |
 
 ## 설치 (uv)
 ```bash

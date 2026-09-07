@@ -15,5 +15,7 @@
 uv sync          
 ```
 가상환경 활성화는 필요 없다.  
-모든 실행은 `uv run ...` 으로 한다.  
+모든 실행은 `uv run ...` 으로 한다.
+- 분석: `uv run run.py 영상파일명`
+- 서비스 화면(Streamlit): `uv run streamlit run app.py` - 영상을 고르면 오버레이 영상과 보행자별 횡단 의도 확률을 보여준다
 YOLO 가중치는 `models/` 에 없으면 처음 실행 때 자동으로 내려받는다.

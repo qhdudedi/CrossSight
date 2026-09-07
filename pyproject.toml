@@ -17,6 +17,8 @@ dependencies = [
     "tensorflow>=2.16; sys_platform != 'linux'",
     "tf-keras>=2.16",          # Keras 2 호환 로더 (TF 2.2 저장본 구조 재구성용)
     "h5py>=3.10",
+    "streamlit>=1.30",
+    "imageio-ffmpeg>=0.5",
 ]
 
 # 패키지 빌드 없이 스크립트만 실행하는 프로젝트 

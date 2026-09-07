@@ -1,0 +1,10 @@
+# Streamlit 테마 - 지정 색상 4가지 조합
+[theme]
+primaryColor = "#7288AE"            # 버튼, 강조
+backgroundColor = "#111844"         # 본문 배경 (짙은 남색)
+secondaryBackgroundColor = "#4B5694" # 사이드바, 표, 입력창 배경
+textColor = "#EAE0CF"               # 글자 (크림색)
+font = "sans serif"
+
+[server]
+maxUploadSize = 2000   # 업로드 상한 MB (4K 영상 대비)

@@ -1,0 +1,38 @@
+/* 관제 화면 꾸미기 - app.py 가 시작할 때 통째로 읽어 넣는다.
+   기본 색(배경/글자/버튼)은 .streamlit/config.toml 테마에서 정하고, 여기서는 개별 요소만 다듬는다.
+   색상: #111844 남색  #4B5694 인디고  #7288AE 스틸블루  #EAE0CF 크림 */
+
+/* 상단 바: 시스템명 + 영상 파일명 */
+.topbar {
+  background: #4B5694;
+  border-left: 8px solid #7288AE;
+  padding: 12px 20px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+.topbar .sys {
+  color: #EAE0CF;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.topbar .file {
+  color: #EAE0CF;
+  opacity: 0.85;
+  font-size: 1.05rem;
+  margin-top: 2px;
+}
+
+/* 사이드바 제목 */
+.sidebar-title {
+  color: #EAE0CF;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+/* 버튼은 사이드바 폭에 꽉 채운다 */
+.stButton > button {
+  width: 100%;
+  font-weight: 700;
+}

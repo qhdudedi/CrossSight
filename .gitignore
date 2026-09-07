@@ -2,6 +2,7 @@
 models/*.pt
 models/*.h5
 outputs/
+video/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -63,15 +63,18 @@ class PoseEstimator:
             crop = frame[Y1:Y2, X1:X2]
             if crop.size == 0:
                 continue
+
             # (2) crop 에 pose 모델 실행 (crop 안에 여러 사람이 있을 수 있다)
             r = self.model.predict(crop, conf=self.conf, imgsz=self.crop_size, device=self.device, verbose=False)[0]
             if r.keypoints is None or r.boxes is None or len(r.boxes) == 0:
                 continue
+
             # (3) crop 안에서 "원래 검출 bbox 의 중심"에 가장 가까운 사람을 고른다 (다른 사람의 관절이 붙는 것을 방지)
             boxes = r.boxes.xyxy.cpu().numpy()
             centers = (boxes[:, :2] + boxes[:, 2:]) / 2
             target = np.array([(det.bbox[0] + det.bbox[2]) / 2 - X1, (det.bbox[1] + det.bbox[3]) / 2 - Y1])
             j = int(np.argmin(np.linalg.norm(centers - target, axis=1)))
+
             # (4) crop 좌표계 -> 원본 프레임 좌표계로 되돌린다 (+X1, +Y1)
             kxy = r.keypoints.xy[j].cpu().numpy() + np.array([X1, Y1])
             kcf = r.keypoints.conf
@@ -88,9 +91,10 @@ def pose_indicators(kp: np.ndarray | None, kc: np.ndarray | None, thr: float = 0
     hand_gesture : 1 이면 손목이 어깨보다 높거나(손 들기) 옆으로 크게 뻗음(수신호)
     kpt_valid    : 신뢰도 thr 이상인 관절 비율. 낮으면(원거리/가림) 위 지표를 덜 믿어야 한다
 
-    관절 신뢰도가 thr 미만이면 그 관절은 '안 보임' 으로 취급한다 (계획서: 원거리에서는 confidence 를 함께 사용).
+    관절 신뢰도가 thr 미만이면 그 관절은 '안 보임' 으로 취급한다.
     """
     out = {"body_frontal": 0.0, "facing_x": 0.0, "head_turn": 0.0, "hand_gesture": 0.0, "kpt_valid": 0.0}
+
     if kp is None or kc is None:  # pose 추론 실패
         return out
     ok = kc >= thr  # 관절별 '보임' 여부
@@ -112,6 +116,7 @@ def pose_indicators(kp: np.ndarray | None, kc: np.ndarray | None, thr: float = 0
             yaw = float(np.clip((kp[NOSE, 0] - mid) / ear_w, -1, 1))  # -1~1
             out["head_turn"] = abs(yaw)
             out["facing_x"] = float(np.sign(yaw)) if abs(yaw) > 0.15 else 0.0
+
         elif len(ears) == 1:
             # 귀가 한쪽만 보이면 완전한 옆모습. 사람의 '오른쪽' 귀가 보이면 화면 오른쪽(+x)을 보고 있다
             out["head_turn"] = 1.0

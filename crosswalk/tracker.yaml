@@ -1,0 +1,16 @@
+# 보행자 추적기 설정 (ultralytics BoT-SORT). detector.py 가 model.track(tracker=이 파일) 로 넘긴다.
+# ultralytics 는 아래 12개 키를 전부 읽으므로 하나라도 빼면 오류가 난다. 기본값과 다른 4개만 표시했다.
+#
+# 목표: 같은 사람에게 같은 track_id 를 끝까지 유지한다. (test.mp4 기준 사람 ID 16개 -> 12개)
+tracker_type: botsort
+track_high_thresh: 0.3     # [변경] 1차 매칭에 쓰는 검출 신뢰도. detector.py 의 conf 와 같은 값
+track_low_thresh: 0.1      # 0.1~0.3 의 약한 박스도 '기존 트랙 잇기' 에는 쓴다 (detector.py 는 이 값으로 검출한다)
+new_track_thresh: 0.3      # [변경] 새 트랙은 이 신뢰도 이상일 때만 만든다
+track_buffer: 150          # [변경] 놓친 트랙을 150 프레임(15fps 기준 10초) 기억했다가 다시 붙인다. 기본 30 이면 2초
+match_thresh: 0.8
+fuse_score: True
+gmc_method: none           # [변경] 고정 CCTV 라 카메라 흔들림 보정 불필요. 기본 sparseOptFlow 는 4K 에서 3배 느리다
+proximity_thresh: 0.5
+appearance_thresh: 0.8
+with_reid: True            # [변경] 외형 비교로 ID 유지. model: auto 면 YOLO 검출기 자체 특징을 써서 추가 모델이 없다
+model: auto

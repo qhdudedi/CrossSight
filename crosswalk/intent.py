@@ -8,7 +8,7 @@
     local_context : (16, 112, 112, 3)  bbox 를 1.5배 넓힌 정사각형 영상 조각. 픽셀값 0~255 를 그대로(float) 넣는다
     pose          : (16, 34)           COCO 17 관절 (x/W, y/H). 안 보이는 관절은 0
     box           : (16, 4)            x1,y1,x2,y2 픽셀. 학습 해상도(1920x1080) 기준으로 스케일
-    speed         : (16, 1)            차량 속도. IDD-PeD 는 자차(블랙박스 차량) OBD 속도.
+    speed         : (16, 1)            IDD-PeD 학습 때는 자차(블랙박스 차량) OBD 속도. 우리는 차량 속도를 쓰지 않아 항상 0.
                                        고정 CCTV 에는 자차가 없으므로 "가장 가까운 차량의 추정 속도" 로 대체한다
     출력          : 횡단 의도 확률 0~1
 
@@ -96,15 +96,15 @@ class PCPAInputs:
         self.ctx: list[np.ndarray] = []  # local context 조각들
         self.pose: list[np.ndarray] = []  # (34,) 벡터들
         self.box: list[np.ndarray] = []  # (4,) 벡터들
-        self.speed: list[float] = []  # km/h
+        self.speed: list[float] = []  # 모델 구조상 필요한 speed 입력 자리. 차량 속도는 쓰지 않으므로 항상 0
 
-    def push(self, ctx: np.ndarray, pose34: np.ndarray, bbox, speed_kmh: float) -> None:
-        """이번 프레임의 입력 4종을 뒤에 붙이고, 16개를 넘으면 가장 오래된 것을 버린다."""
+    def push(self, ctx: np.ndarray, pose34: np.ndarray, bbox) -> None:
+        """이번 프레임의 입력을 뒤에 붙이고, 16개를 넘으면 가장 오래된 것을 버린다. speed 는 0 으로 채운다."""
         x1, y1, x2, y2 = bbox
         self.ctx.append(ctx)
         self.pose.append(pose34)
         self.box.append(np.array([x1 * self.sx, y1 * self.sy, x2 * self.sx, y2 * self.sy], np.float32))
-        self.speed.append(float(speed_kmh))
+        self.speed.append(0.0)
         for lst in (self.ctx, self.pose, self.box, self.speed):
             if len(lst) > OBS_LEN:
                 del lst[0]
@@ -194,6 +194,7 @@ def build_pcpa(hidden: int = 256):
     x = attention(x, "_modality")
     out = Dense(1, activation="sigmoid", name="output_dense")(x)
     return Model(inputs=inputs, outputs=out, name="PCPA")
+
 
 
 class PCPAIntent:

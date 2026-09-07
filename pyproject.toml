@@ -4,11 +4,14 @@ version = "0.1.0"
 description = "비신호 횡단보도 보행자 횡단 의도 추정 - YOLO11 + YOLO11-pose + PCPA(IDD-PeD)"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
+
 dependencies = [
-    "ultralytics>=8.3",        # 부분 모델 1,2: YOLO11 검출(+ByteTrack), YOLO11-pose
+    "ultralytics>=8.3",        # 부분 모델 1,2: YOLO11 검출(+BoT-SORT 추적), YOLO11-pose
+    "torch>=2.6",              # 직접 명시해야 아래 [tool.uv.sources] 의 CUDA 12.6 인덱스가 적용된다
+    "torchvision>=0.21",
     "opencv-python>=4.10",
     "numpy>=1.26,<3",
-    "lap>=0.5",                # ByteTrack 매칭
+    "lap>=0.5",                # 추적기의 박스 매칭(선형 할당)
     # 부분 모델 3: PCPA 체크포인트 실행. Linux(WSL2 포함)에서는 CUDA 라이브러리까지 함께 설치해 GPU 사용
     "tensorflow[and-cuda]>=2.16; sys_platform == 'linux'",
     "tensorflow>=2.16; sys_platform != 'linux'",
@@ -16,6 +19,17 @@ dependencies = [
     "h5py>=3.10",
 ]
 
-# 패키지 빌드 없이 스크립트만 실행하는 프로젝트 (uv run run.py)
+# 패키지 빌드 없이 스크립트만 실행하는 프로젝트 
 [tool.uv]
 package = false
+
+override-dependencies = ["triton; sys_platform == 'never'"]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu126", marker = "sys_platform == 'linux'" }]
+torchvision = [{ index = "pytorch-cu126", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
